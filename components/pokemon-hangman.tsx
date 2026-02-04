@@ -245,12 +245,13 @@ export function PokemonHangman() {
                 {gameStatus === 'playing' ? (
                   <div className="relative w-48 h-48 flex items-center justify-center">
                     {MAX_ATTEMPTS - wrongGuesses <= 3 ? (
-                      <div className="space-y-2 animate-in fade-in-50 zoom-in-50 duration-500">
+                      <div className="space-y-2 animate-in fade-in-50 zoom-in-50 duration-500 select-none">
                         <img
                           src={pokemon.spriteUrl || "/placeholder.svg"}
-                          alt="Silueta del Pokémon"
-                          className="w-full h-full object-contain brightness-0"
+                          alt="Silueta misteriosa"
+                          className="w-full h-full object-contain brightness-0 pointer-events-none"
                           style={{ filter: 'brightness(0)' }}
+                          draggable="false"
                         />
                         <p className="text-xs text-muted-foreground font-medium">
                           {'Pista visual desbloqueada'}
