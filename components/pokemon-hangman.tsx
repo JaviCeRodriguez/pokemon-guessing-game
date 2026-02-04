@@ -6,6 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Volume2, RefreshCw, CheckCircle2, XCircle } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface PokemonData {
   name: string
@@ -14,6 +21,19 @@ interface PokemonData {
   imageUrl: string
   spriteUrl: string
 }
+
+const GENERATIONS = [
+  { label: 'Todas las generaciones', min: 1, max: 1025 },
+  { label: 'Generación 1 (Kanto)', min: 1, max: 151 },
+  { label: 'Generación 2 (Johto)', min: 152, max: 251 },
+  { label: 'Generación 3 (Hoenn)', min: 252, max: 386 },
+  { label: 'Generación 4 (Sinnoh)', min: 387, max: 493 },
+  { label: 'Generación 5 (Unova)', min: 494, max: 649 },
+  { label: 'Generación 6 (Kalos)', min: 650, max: 721 },
+  { label: 'Generación 7 (Alola)', min: 722, max: 809 },
+  { label: 'Generación 8 (Galar)', min: 810, max: 905 },
+  { label: 'Generación 9 (Paldea)', min: 906, max: 1025 },
+]
 
 const TYPE_COLORS: Record<string, string> = {
   normal: 'bg-gray-400',
@@ -45,6 +65,7 @@ export function PokemonHangman() {
   const [wrongGuesses, setWrongGuesses] = useState(0)
   const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'lost'>('playing')
   const [audioPlayed, setAudioPlayed] = useState(false)
+  const [selectedGeneration, setSelectedGeneration] = useState(0)
 
   const fetchRandomPokemon = async () => {
     setLoading(true)
@@ -54,8 +75,8 @@ export function PokemonHangman() {
     setAudioPlayed(false)
 
     try {
-      // Hay 1025 Pokémon en la PokeAPI (hasta Gen 9)
-      const randomId = Math.floor(Math.random() * 1025) + 1
+      const generation = GENERATIONS[selectedGeneration]
+      const randomId = Math.floor(Math.random() * (generation.max - generation.min + 1)) + generation.min
       const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`)
       const data = await response.json()
 
@@ -195,6 +216,27 @@ export function PokemonHangman() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-8">
+        {/* Selector de generación */}
+        <div className="flex justify-center">
+          <div className="w-full max-w-xs">
+            <Select
+              value={selectedGeneration.toString()}
+              onValueChange={(value) => setSelectedGeneration(Number(value))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecciona una generación" />
+              </SelectTrigger>
+              <SelectContent>
+                {GENERATIONS.map((gen, index) => (
+                  <SelectItem key={index} value={index.toString()}>
+                    {gen.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         {/* Área de pistas */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 p-6 bg-muted/50 rounded-xl">
           <Button
