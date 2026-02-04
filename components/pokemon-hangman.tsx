@@ -12,6 +12,7 @@ interface PokemonData {
   types: string[]
   cryUrl: string
   imageUrl: string
+  spriteUrl: string
 }
 
 const TYPE_COLORS: Record<string, string> = {
@@ -63,6 +64,7 @@ export function PokemonHangman() {
         types: data.types.map((t: any) => t.type.name),
         cryUrl: data.cries?.latest || data.cries?.legacy || '',
         imageUrl: data.sprites.other['official-artwork'].front_default || data.sprites.front_default,
+        spriteUrl: data.sprites.front_default,
       }
 
       setPokemon(pokemonData)
@@ -222,7 +224,7 @@ export function PokemonHangman() {
           {renderWord()}
         </div>
 
-        {/* Hangman y estado */}
+        {/* Hangman y sprite */}
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="flex flex-col items-center space-y-4">
             {renderHangman()}
@@ -236,16 +238,29 @@ export function PokemonHangman() {
             </div>
           </div>
 
-          {/* Imagen del Pokémon (solo si ganó o perdió) */}
+          {/* Silueta o imagen del Pokémon */}
           <div className="flex justify-center">
-            {gameStatus !== 'playing' && pokemon && (
+            {pokemon && (
               <div className="text-center space-y-4">
-                <img
-                  src={pokemon.imageUrl || "/placeholder.svg"}
-                  alt={pokemon.name}
-                  className="w-48 h-48 object-contain mx-auto animate-in fade-in-50 zoom-in-50 duration-500"
-                />
-                <p className="text-2xl font-bold uppercase">{pokemon.name}</p>
+                {gameStatus === 'playing' ? (
+                  <div className="relative w-48 h-48 flex items-center justify-center">
+                    <img
+                      src={pokemon.spriteUrl || "/placeholder.svg"}
+                      alt="Silueta del Pokémon"
+                      className="w-full h-full object-contain brightness-0"
+                      style={{ filter: 'brightness(0)' }}
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-2 animate-in fade-in-50 zoom-in-50 duration-500">
+                    <img
+                      src={pokemon.imageUrl || "/placeholder.svg"}
+                      alt={pokemon.name}
+                      className="w-48 h-48 object-contain mx-auto"
+                    />
+                    <p className="text-2xl font-bold uppercase">{pokemon.name}</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
