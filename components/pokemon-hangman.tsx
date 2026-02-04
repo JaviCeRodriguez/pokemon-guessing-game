@@ -244,12 +244,28 @@ export function PokemonHangman() {
               <div className="text-center space-y-4">
                 {gameStatus === 'playing' ? (
                   <div className="relative w-48 h-48 flex items-center justify-center">
-                    <img
-                      src={pokemon.spriteUrl || "/placeholder.svg"}
-                      alt="Silueta del Pokémon"
-                      className="w-full h-full object-contain brightness-0"
-                      style={{ filter: 'brightness(0)' }}
-                    />
+                    {MAX_ATTEMPTS - wrongGuesses <= 3 ? (
+                      <div className="space-y-2 animate-in fade-in-50 zoom-in-50 duration-500">
+                        <img
+                          src={pokemon.spriteUrl || "/placeholder.svg"}
+                          alt="Silueta del Pokémon"
+                          className="w-full h-full object-contain brightness-0"
+                          style={{ filter: 'brightness(0)' }}
+                        />
+                        <p className="text-xs text-muted-foreground font-medium">
+                          {'Pista visual desbloqueada'}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/20">
+                        <div className="text-center">
+                          <p className="text-6xl">{'?'}</p>
+                          <p className="text-xs mt-2">
+                            {'Pista visual en 3 intentos'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-2 animate-in fade-in-50 zoom-in-50 duration-500">
