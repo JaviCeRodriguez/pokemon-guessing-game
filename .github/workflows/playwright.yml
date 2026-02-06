@@ -19,9 +19,13 @@ jobs:
 
     - name: Create .env file for Build
       run: |
-        echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
-        echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" >> .env
-        echo "POKEMON_GAME_SECRET=${{ secrets.POKEMON_GAME_SECRET }}" >> .env
+        echo "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" >> .env
+        echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY" >> .env
+        echo "POKEMON_GAME_SECRET=$POKEMON_GAME_SECRET" >> .env
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        POKEMON_GAME_SECRET: ${{ secrets.POKEMON_GAME_SECRET }}
 
     - name: Verify .env exists
       run: |
@@ -34,7 +38,6 @@ jobs:
 
     - name: Run Playwright tests
       run: pnpm exec playwright test
-      # No necesitas el bloque env aquí porque ya creamos el archivo .env
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
