@@ -352,6 +352,7 @@ export function PokemonHangmanClient() {
               return (
                 <Button
                   key={letter}
+                  data-testid={`letter-button-${letter}`}
                   onClick={() => void handleLetterClick(letter)}
                   disabled={isGuessed || game.status !== POKEMON_HANGMAN_STATUS.IN_PROGRESS || pendingGuessRef.current}
                   variant={variant}

@@ -68,13 +68,14 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests.
-   * Make sure `pnpm dev` or `pnpm start` is running when executing Playwright tests.
-   * If you prefer Playwright to manage the server, uncomment and adjust the block below.
+   * - In CI: Playwright will automatically start the server
+   * - Locally: If `pnpm dev` is already running, Playwright will reuse it.
+   *   Otherwise, Playwright will start it automatically.
    */
   webServer: {
-    command: "pnpm build && pnpm start",
+    command: "pnpm dev",
     url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI, // Reuse in local dev, always start fresh in CI
     timeout: 120 * 1000,
     env: {
       NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || "",

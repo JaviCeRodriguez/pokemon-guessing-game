@@ -35,7 +35,7 @@
 
 ---
 
-## Test Case: `POKE-E2E-002` - Jugar hasta terminar la partida
+## Test Case: `POKE-E2E-002` - Marcar una letra como usada
 
 **Priority:** `critical`
 
@@ -43,23 +43,22 @@
 - type → @e2e
 - feature → @pokemon-hangman
 
-**Description/Objective:** Verificar que el usuario puede jugar la partida hasta que el juego termine en victoria o derrota.
+**Description/Objective:** Verificar que al pulsar una letra del teclado esta queda marcada como usada (botón deshabilitado) y que el juego permanece en progreso (sin mensaje de victoria/derrota).
 
 **Preconditions:**
 - Servidor de Next.js corriendo en `http://localhost:3000`.
 
 ### Flow Steps:
 1. Navegar a `/`.
-2. Pulsar secuencialmente las letras del teclado en pantalla.
-3. Continuar hasta que aparezca un mensaje de victoria o derrota.
+2. Pulsar una letra del teclado (por ejemplo, \"a\").
 
 ### Expected Result:
-- Aparece el mensaje de "¡Felicitaciones! ¡Lo atrapaste!" **o**
-- Aparece el mensaje de "¡Oh no! Era {NOMBRE_DEL_POKÉMON}".
+- El botón de la letra pulsada queda deshabilitado (ya no se puede volver a usar).
+- No aparece aún ningún mensaje de victoria o derrota.
 
 ### Key verification points:
-- El juego siempre termina en un estado consistente (ganado o perdido) tras suficientes intentos.
-- El mensaje de estado final es visible y legible.
+- Las letras usadas se marcan correctamente como no reutilizables.
+- El estado del juego no pasa prematuramente a ganado/perdido tras un único intento.
 
 ---
 
@@ -71,22 +70,50 @@
 - type → @e2e
 - feature → @pokemon-hangman
 
-**Description/Objective:** Verificar que al pulsar el botón de "Nuevo Pokémon / Jugar de nuevo" el estado del juego se resetea correctamente.
+**Description/Objective:** Verificar que al pulsar el botón de "Nuevo Pokémon / Jugar de nuevo" se resetean las letras usadas y el usuario puede volver a jugar.
 
 **Preconditions:**
 - Servidor de Next.js corriendo en `http://localhost:3000`.
 
 ### Flow Steps:
 1. Navegar a `/`.
-2. Jugar pulsando letras hasta que el juego termine en victoria o derrota.
-3. Verificar que los botones de letras están deshabilitados y que se muestra el mensaje de estado final.
-4. Pulsar el botón de "Nuevo Pokémon / Jugar de nuevo".
+2. Pulsar una letra (por ejemplo, \"b\") y verificar que queda deshabilitada.
+3. Pulsar el botón de "Nuevo Pokémon / Jugar de nuevo".
 
 ### Expected Result:
-- Desaparecen los mensajes de victoria/derrota.
-- El teclado de letras vuelve a estar habilitado para iniciar una nueva partida.
+- La letra usada vuelve a estar habilitada tras el reset (nuevo juego).
 
 ### Key verification points:
-- El botón de jugar de nuevo está visible tras terminar la partida.
-- Tras pulsarlo, el usuario puede volver a interactuar con las letras.
+- El botón de "Nuevo Pokémon / Jugar de nuevo" está visible y operativo en todo momento.
+- Tras pulsarlo, el usuario puede volver a interactuar con las letras, incluyendo las que ya había usado.
+
+---
+
+## Test Case: `POKE-E2E-004` - Jugar hasta ganar o perder la partida
+
+**Priority:** `critical`
+
+**Tags:**
+- type → @e2e
+- feature → @pokemon-hangman
+
+**Description/Objective:** Verificar que el usuario puede jugar la partida completa hasta que el juego termine en victoria o derrota, pulsando letras secuencialmente.
+
+**Preconditions:**
+- Servidor de Next.js corriendo en `http://localhost:3000`.
+
+### Flow Steps:
+1. Navegar a `/`.
+2. Pulsar letras del teclado secuencialmente (a-z).
+3. Continuar hasta que aparezca un mensaje de victoria o derrota.
+
+### Expected Result:
+- Aparece el mensaje de "¡Felicitaciones! ¡Lo atrapaste!" **o**
+- Aparece el mensaje de "¡Oh no! Era {NOMBRE_DEL_POKÉMON}".
+- El botón de "Jugar de nuevo" está visible.
+
+### Key verification points:
+- El juego siempre termina en un estado consistente (ganado o perdido) tras suficientes intentos.
+- El mensaje de estado final es visible y legible.
+- El método de juego maneja correctamente las requests asíncronas al servidor.
 
