@@ -69,6 +69,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.4",
     "eslint": "^8.57.1",
     "eslint-config-next": "16.1.6",
     "postcss": "^8.5",

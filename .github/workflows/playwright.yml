@@ -1,8 +1,4 @@
 name: Playwright Tests
-env:
-    NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-    POKEMON_GAME_SECRET: ${{ secrets.POKEMON_GAME_SECRET }}
 on:
   push:
     branches: [ main, master ]
@@ -12,6 +8,10 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        POKEMON_GAME_SECRET: ${{ secrets.POKEMON_GAME_SECRET }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
