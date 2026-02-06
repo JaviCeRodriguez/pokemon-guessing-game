@@ -8,41 +8,24 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY }}
+        POKEMON_GAME_SECRET: ${{ secrets.POKEMON_GAME_SECRET }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
-    
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install
-
-    - name: Create .env file for Build
-      run: |
-        echo "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" >> .env
-        echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY" >> .env
-        echo "POKEMON_GAME_SECRET=$POKEMON_GAME_SECRET" >> .env
-      env:
-        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-        POKEMON_GAME_SECRET: ${{ secrets.POKEMON_GAME_SECRET }}
-
-    - name: Verify .env exists
-      run: |
-        ls -la .env
-        grep "NEXT_PUBLIC_SUPABASE_URL" .env | cut -d'=' -f1
-        echo "La longitud de la URL es: ${#NEXT_PUBLIC_SUPABASE_URL}"
-
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
-
     - name: Run Playwright tests
       run: pnpm exec playwright test
-
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-

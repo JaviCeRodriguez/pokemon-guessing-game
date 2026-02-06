@@ -80,8 +80,8 @@ export default defineConfig({
     timeout: 120 * 1000,
     env: {
       NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      NEXT_PUBLIC_SUPABASE_ANON_KEY:
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY:
+        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY || "",
       POKEMON_GAME_SECRET: process.env.POKEMON_GAME_SECRET || "",
     },
   },
