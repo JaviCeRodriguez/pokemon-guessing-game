@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { RefreshCw, CheckCircle2, XCircle, Volume2 } from "lucide-react";
 
 import { recordWin } from "@/app/actions/game";
@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { createClient as createSupabaseClient } from "@/utils/supabase/client";
 
 const TYPE_COLORS: Record<string, string> = {
   normal: "bg-gray-400",
@@ -46,6 +47,7 @@ export function PokemonHangmanClient() {
   const [selectedGeneration, setSelectedGeneration] = useState(0);
   const [audioPlayed, setAudioPlayed] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const winRecordedRef = useRef(false);
   const pendingGuessRef = useRef(false);
 
@@ -91,6 +93,18 @@ export function PokemonHangmanClient() {
     void recordWin({ streak: nextStreak });
   }, [game, currentStreak]);
 
+  useEffect(() => {
+    const supabase = createSupabaseClient();
+    void supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        setIsAuthenticated(Boolean(data.user));
+      })
+      .catch(() => {
+        setIsAuthenticated(false);
+      });
+  }, []);
+
   const playCry = () => {
     const cryUrl = game?.cryUrl;
     if (!cryUrl) return;
@@ -99,20 +113,36 @@ export function PokemonHangmanClient() {
     setAudioPlayed(true);
   };
 
-  const handleLetterClick = async (letter: string) => {
-    if (!game) return;
-    if (game.status !== POKEMON_HANGMAN_STATUS.IN_PROGRESS) return;
-    if (pendingGuessRef.current) return;
-    if (game.correctLetters.includes(letter) || game.wrongLetters.includes(letter)) return;
+  const handleLetterClick = useCallback(
+    async (letter: string) => {
+      if (!game) return;
+      if (game.status !== POKEMON_HANGMAN_STATUS.IN_PROGRESS) return;
+      if (pendingGuessRef.current) return;
+      if (game.correctLetters.includes(letter) || game.wrongLetters.includes(letter)) return;
 
-    pendingGuessRef.current = true;
-    try {
-      const next = await guessPokemonHangmanLetter({ gameToken: game.gameToken, letter });
-      setGame(next);
-    } finally {
-      pendingGuessRef.current = false;
-    }
-  };
+      pendingGuessRef.current = true;
+      try {
+        const next = await guessPokemonHangmanLetter({ gameToken: game.gameToken, letter });
+        setGame(next);
+      } finally {
+        pendingGuessRef.current = false;
+      }
+    },
+    [game],
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const letter = event.key.toLowerCase();
+      if (!/^[a-z]$/.test(letter)) return;
+      void handleLetterClick(letter);
+    };
+
+    globalThis.addEventListener("keydown", handleKeyDown);
+    return () => {
+      globalThis.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleLetterClick]);
 
   const renderWord = () => {
     if (!game) return null;
@@ -333,7 +363,7 @@ export function PokemonHangmanClient() {
             })}
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-1">
             <Button
               onClick={() => void startGame(selectedGeneration)}
               size="lg"
@@ -343,6 +373,13 @@ export function PokemonHangmanClient() {
               <RefreshCw className="h-5 w-5" />
               {game.status === POKEMON_HANGMAN_STATUS.IN_PROGRESS ? "Nuevo Pokémon" : "Jugar de nuevo"}
             </Button>
+            {isAuthenticated === false && (
+              <p className="text-center text-xs text-muted-foreground">
+                {
+                  "Para guardar tus resultados y aparecer en el ranking, necesitas registrarte e iniciar sesión antes de jugar."
+                }
+              </p>
+            )}
           </div>
         </div>
       </CardContent>
