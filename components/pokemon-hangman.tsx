@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Volume2, RefreshCw, CheckCircle2, XCircle } from 'lucide-react'
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { recordWin } from '@/app/actions/game'
 
 interface PokemonData {
   name: string
@@ -66,6 +67,8 @@ export function PokemonHangman() {
   const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'lost'>('playing')
   const [audioPlayed, setAudioPlayed] = useState(false)
   const [selectedGeneration, setSelectedGeneration] = useState(0)
+  const [currentStreak, setCurrentStreak] = useState(0)
+  const winRecordedRef = useRef(false)
 
   const fetchRandomPokemon = async () => {
     setLoading(true)
@@ -73,6 +76,7 @@ export function PokemonHangman() {
     setWrongGuesses(0)
     setGameStatus('playing')
     setAudioPlayed(false)
+    winRecordedRef.current = false
 
     try {
       const generation = GENERATIONS[selectedGeneration]
@@ -103,7 +107,7 @@ export function PokemonHangman() {
   useEffect(() => {
     if (!pokemon || gameStatus !== 'playing') return
 
-    const nameLetters = new Set(pokemon.name.replace(/[^a-z]/g, '').split(''))
+    const nameLetters = new Set(pokemon.name.replaceAll(/[^a-z]/g, '').split(''))
     const allLettersGuessed = Array.from(nameLetters).every(letter => guessedLetters.has(letter))
 
     if (allLettersGuessed) {
@@ -112,6 +116,23 @@ export function PokemonHangman() {
       setGameStatus('lost')
     }
   }, [guessedLetters, wrongGuesses, pokemon, gameStatus])
+
+  useEffect(() => {
+    if (gameStatus === 'lost') {
+      setCurrentStreak(0)
+      return
+    }
+
+    if (gameStatus !== 'won') return
+    if (winRecordedRef.current) return
+    winRecordedRef.current = true
+
+    const nextStreak = currentStreak + 1
+    setCurrentStreak(nextStreak)
+
+    // Fire-and-forget: if not authenticated, action returns not_authenticated.
+    void recordWin({ streak: nextStreak })
+  }, [gameStatus, currentStreak])
 
   const playCry = () => {
     if (pokemon?.cryUrl) {
@@ -139,7 +160,7 @@ export function PokemonHangman() {
     return pokemon.name.split('').map((char, index) => {
       if (char === '-' || char === ' ') {
         return (
-          <span key={index} className="inline-block w-4 text-center">
+          <span key={`${char}-${index}`} className="inline-block w-4 text-center">
             {char}
           </span>
         )
@@ -148,7 +169,7 @@ export function PokemonHangman() {
       const isGuessed = guessedLetters.has(char) || gameStatus !== 'playing'
       return (
         <span
-          key={index}
+          key={`${char}-${index}`}
           className="inline-block w-10 h-12 mx-1 border-b-4 border-primary text-center text-2xl font-bold uppercase leading-[3rem]"
         >
           {isGuessed ? char : ''}
@@ -207,17 +228,9 @@ export function PokemonHangman() {
 
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-xl">
-      <CardHeader className="text-center space-y-2">
-        <CardTitle className="text-4xl font-black text-balance">
-          {'¿Quién es ese Pokémon?'}
-        </CardTitle>
-        <CardDescription className="text-lg">
-          {'Escucha el grito y adivina el nombre usando las pistas de tipos'}
-        </CardDescription>
-      </CardHeader>
       <CardContent className="space-y-8">
         {/* Selector de generación */}
-        <div className="flex justify-center">
+        <div className="flex justify-center pt-8">
           <div className="w-full max-w-xs">
             <Select
               value={selectedGeneration.toString()}
@@ -228,7 +241,7 @@ export function PokemonHangman() {
               </SelectTrigger>
               <SelectContent>
                 {GENERATIONS.map((gen, index) => (
-                  <SelectItem key={index} value={index.toString()}>
+                  <SelectItem key={gen.label} value={index.toString()}>
                     {gen.label}
                   </SelectItem>
                 ))}
@@ -351,18 +364,21 @@ export function PokemonHangman() {
               const isGuessed = guessedLetters.has(letter)
               const isCorrect = isGuessed && pokemon?.name.includes(letter)
               const isWrong = isGuessed && !pokemon?.name.includes(letter)
+              let variant: 'default' | 'destructive' | 'outline' = 'outline'
+              if (isCorrect) variant = 'default'
+              else if (isWrong) variant = 'destructive'
+              const base = 'w-10 h-10 text-lg font-bold uppercase'
+              const correct = isCorrect ? 'bg-primary hover:bg-primary' : ''
+              const wrong = isWrong ? 'bg-destructive hover:bg-destructive opacity-50' : ''
+              const composed = `${base} ${correct} ${wrong}`.trim()
 
               return (
                 <Button
                   key={letter}
                   onClick={() => handleLetterClick(letter)}
                   disabled={isGuessed || gameStatus !== 'playing'}
-                  variant={isCorrect ? 'default' : isWrong ? 'destructive' : 'outline'}
-                  className={`w-10 h-10 text-lg font-bold uppercase ${
-                    isCorrect ? 'bg-primary hover:bg-primary' : ''
-                  } ${
-                    isWrong ? 'bg-destructive hover:bg-destructive opacity-50' : ''
-                  }`}
+                  variant={variant}
+                  className={composed}
                 >
                   {letter}
                 </Button>
