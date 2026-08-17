@@ -7,7 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 export async function recordWin(input: { streak: number }) {
   const streak = Number.isFinite(input.streak) ? Math.max(0, input.streak) : 0;
 
-  const supabase = createClient(cookies());
+  const supabase = createClient(await cookies());
   const { data: authData } = await supabase.auth.getUser();
   const user = authData.user;
   if (!user) return { ok: false as const, reason: "not_authenticated" as const };
@@ -43,4 +43,3 @@ export async function recordWin(input: { streak: number }) {
 
   return { ok: true as const };
 }
-

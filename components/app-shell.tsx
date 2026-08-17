@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import type { ReactNode } from "react";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { TopNav } from "@/components/top-nav";
@@ -15,19 +15,20 @@ export interface AppShellUser {
 
 export function AppShell({
   children,
+  devEmailAuthEnabled,
   user,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
+  devEmailAuthEnabled: boolean;
   user: AppShellUser | null;
 }) {
   return (
     <SidebarProvider>
       <AppSidebar user={user} />
-      <SidebarInset>
-        <TopNav user={user} />
+      <SidebarInset className="min-w-0 bg-transparent">
+        <TopNav devEmailAuthEnabled={devEmailAuthEnabled} user={user} />
         {children}
       </SidebarInset>
     </SidebarProvider>
   );
 }
-

@@ -32,9 +32,11 @@ pnpm lint
 
 ## Skills reference (auto-invoke)
 Skills are in `.agents/skills/`:
-- [`typescript`](.agents/skills/typescript/SKILL.md)
-- [`next-best-practices`](.agents/skills/next-best-practices/SKILL.md)
-- [`vercel-react-best-practices`](.agents/skills/vercel-react-best-practices/SKILL.md)
+- [`frontend-design`](.agents/skills/frontend-design/SKILL.md)
+- [`game-ui-design`](.agents/skills/game-ui-design/SKILL.md)
+- [`shadcn`](.agents/skills/shadcn/SKILL.md)
+- [`nextjs-supabase-auth`](.agents/skills/nextjs-supabase-auth/SKILL.md)
+- [`supabase`](.agents/skills/supabase/SKILL.md)
 - [`playwright`](.agents/skills/playwright/SKILL.md)
 - [`supabase-postgres-best-practices`](.agents/skills/supabase-postgres-best-practices/SKILL.md)
 
@@ -42,9 +44,11 @@ When performing these actions, **read the corresponding skill first**:
 
 | Action | Skill |
 |---|---|
-| Writing/refactoring `.ts/.tsx` types, interfaces, generics | `typescript` |
-| Editing Next.js routes/layouts, RSC boundaries, data fetching | `next-best-practices` |
-| React/Next performance work (waterfalls, bundle size, rendering) | `vercel-react-best-practices` |
+| Creating or reshaping product UI | `frontend-design` |
+| Designing game HUDs, menus, feedback, or accessibility | `game-ui-design` |
+| Adding, composing, or changing shadcn components | `shadcn` |
+| Integrating Supabase Auth with Next.js | `nextjs-supabase-auth` |
+| Any Supabase task | `supabase` |
 | Writing Playwright E2E tests | `playwright` |
 | SQL/schema/query performance or Supabase/Postgres tuning | `supabase-postgres-best-practices` |
 
@@ -67,3 +71,13 @@ When performing these actions, **read the corresponding skill first**:
 - `pnpm lint` passes
 - `pnpm build` passes
 - No secrets added; env vars remain in `.env*.local`
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

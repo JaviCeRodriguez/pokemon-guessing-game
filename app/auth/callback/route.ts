@@ -9,10 +9,9 @@ export async function GET(request: Request) {
   const next = url.searchParams.get("next") ?? "/";
 
   if (code) {
-    const supabase = createClient(cookies());
+    const supabase = createClient(await cookies());
     await supabase.auth.exchangeCodeForSession(code);
   }
 
   return NextResponse.redirect(new URL(next, url.origin));
 }
-

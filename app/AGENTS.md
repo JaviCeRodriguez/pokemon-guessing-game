@@ -21,8 +21,6 @@ pnpm lint
 - ✅ **Metadata**: use the exported `metadata` object pattern as in `app/layout.tsx`.
 - ✅ **Global CSS**: use `app/globals.css` for Next’s global styles (don’t scatter global selectors across many files).
 
-Next.js-specific guidance: reference `.agents/skills/next-best-practices/SKILL.md`.
-
 ## Touch points / key files
 - App shell & metadata: `app/layout.tsx`
 - Home route: `app/page.tsx`

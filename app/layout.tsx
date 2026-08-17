@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bungee, Geist, Geist_Mono } from "next/font/google";
 
 import { AppShell, type AppShellUser } from "@/components/app-shell";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -8,17 +8,17 @@ import { createClient } from "@/utils/supabase/server";
 
 import "./globals.css";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
+const bungee = Bungee({ subsets: ["latin"], weight: "400", variable: "--font-display" });
 
 export const metadata: Metadata = {
-  title: "Pókemon Guesser",
-  description: "Pon a prueba tu conocimiento pokémon",
-  generator: "v0.app",
+  title: "Pokémon Guesser · Laboratorio de campo",
+  description: "Reconoce al Pokémon por su grito, tipo y silueta.",
 };
 
 async function getInitialUser(): Promise<AppShellUser | null> {
-  const supabase = createClient(cookies());
+  const supabase = createClient(await cookies());
   const { data } = await supabase.auth.getUser();
   const user = data.user;
   if (!user) return null;
@@ -47,18 +47,24 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = await getInitialUser();
+  const devEmailAuthEnabled =
+    process.env.NODE_ENV === "development" &&
+    process.env.ENABLE_DEV_EMAIL_AUTH === "true";
+
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className="font-sans antialiased">
+      <body className={`${geist.variable} ${geistMono.variable} ${bungee.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <AppShell user={user}>{children}</AppShell>
+          <AppShell devEmailAuthEnabled={devEmailAuthEnabled} user={user}>
+            {children}
+          </AppShell>
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

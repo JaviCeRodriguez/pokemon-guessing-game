@@ -18,9 +18,7 @@ pnpm build
 - ✅ **DO**: Use the Tailwind class merge helper `cn()` from `lib/utils.ts` when combining classes.
 - ✅ **DO**: Use absolute imports via `@/…` (see `tsconfig.json`).
 - ✅ **Client components**: Add `"use client"` at the top when using hooks. Example: `components/pokemon-hangman.tsx`.
-- ❌ **DON'T**: Create deep nested inline types; keep interfaces flat (reference: `.agents/skills/typescript/SKILL.md`).
-
-React/Next performance guidance: reference `.agents/skills/vercel-react-best-practices/SKILL.md`.
+- ❌ **DON'T**: Create deep nested inline types; keep interfaces flat.
 
 ### Concrete examples in this repo
 - ✅ Feature component pattern (state + effects): `components/pokemon-hangman.tsx`

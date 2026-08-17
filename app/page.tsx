@@ -1,19 +1,30 @@
-import { PokemonHangman } from '@/components/pokemon-hangman'
+import { RadioTower } from "lucide-react";
+
+import { PokemonHangman } from "@/components/pokemon-hangman";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background p-4 sm:p-8 flex items-center justify-center">
-      <div className="w-full max-w-5xl">
-        <div className="text-center mb-8 space-y-2">
-          <h1 className="text-5xl sm:text-6xl font-black text-primary text-balance">
-            {'¿Quién es ese Pokémon?'}
+    <main className="mx-auto flex w-full max-w-[90rem] flex-col gap-6 px-[clamp(1rem,5vw,4rem)] py-6 sm:py-10">
+      <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex max-w-4xl flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge variant="outline">
+              <RadioTower aria-hidden="true" />
+              Terminal de campo 001
+            </Badge>
+            <span className="field-label">Señal en línea</span>
+          </div>
+          <h1 className="font-[family-name:var(--font-display)] text-4xl leading-[1.05] tracking-tight text-balance sm:text-6xl lg:text-7xl">
+            ¿Quién es ese <span className="text-primary">Pokémon?</span>
           </h1>
-          <p className="text-lg text-muted-foreground">
-            {'Pon a prueba tu conocimiento pokémon'}
-          </p>
         </div>
-        <PokemonHangman />
-      </div>
+        <p className="max-w-md text-base font-medium leading-relaxed text-muted-foreground sm:text-lg">
+          Escuchá su grito, estudiá las pistas y completá el registro antes de agotar los intentos.
+        </p>
+      </header>
+
+      <PokemonHangman />
     </main>
-  )
+  );
 }

@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
         NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY }}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY }}
+        ENABLE_DEV_EMAIL_AUTH: "true"
+        E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+        E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
         POKEMON_GAME_SECRET: ${{ secrets.POKEMON_GAME_SECRET }}
     steps:
     - uses: actions/checkout@v4
